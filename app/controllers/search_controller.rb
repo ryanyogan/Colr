@@ -19,5 +19,20 @@ class SearchController < UIViewController
     @search.sizeToFit
     @search.center = CGPointMake(self.view.frame.size.width / 2, @text_field.center.y + 40)
     self.view.addSubview @search
+
+    # THis is from BW:: an awesome wrapper for addTarget:
+    @search.when(UIControlEventTouchUpInside) do
+      @search.enabled = false
+      @text_field.enabled = false
+
+      hex = @text_field.text
+      # Let's get rid of the hash symbol from the input
+      hex = hex[1..-1] if hex[0] == "#"
+
+      Color.find(hex) do |color|
+        @search.enabled = true
+        @text_field.enabled = true
+      end
+    end
   end
 end

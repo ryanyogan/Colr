@@ -4,6 +4,13 @@ class Color
     attr_accessor prop
   }
 
+  def self.find(hex, &block)
+    BW::HTTP.get("http://www.colr.org/json/color/#{hex}") do |response|
+      p response.body.to_str
+      block.call(nil)
+    end
+  end
+
   def initialize(hash = {})
     hash.each { |key, value|
       if PROPERTIES.member? key.to_sym
