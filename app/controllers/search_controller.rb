@@ -22,17 +22,28 @@ class SearchController < UIViewController
 
     # THis is from BW:: an awesome wrapper for addTarget:
     @search.when(UIControlEventTouchUpInside) do
-      @search.enabled = false
       @text_field.enabled = false
+      @search.enabled     = false
 
       hex = @text_field.text
       # Let's get rid of the hash symbol from the input
       hex = hex[1..-1] if hex[0] == "#"
 
       Color.find(hex) do |color|
-        @search.enabled = true
+        if color.nil?
+          @search.setTitle("None :(", forState: UIControlStateNormal)
+        else
+          @search.setTitle("Search", forState: UIControlStateNormal)
+          self.open_color(color)
+        end
+
         @text_field.enabled = true
+        @search.enabled     = true
       end
     end
+  end
+
+  def open_color(color)
+    self.navigationController.pushViewController(ColorController.alloc.initWithColor(color), animated: true)
   end
 end

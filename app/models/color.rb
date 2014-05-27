@@ -6,8 +6,16 @@ class Color
 
   def self.find(hex, &block)
     BW::HTTP.get("http://www.colr.org/json/color/#{hex}") do |response|
-      p response.body.to_str
-      block.call(nil)
+      result_data = BW::JSON.parse(response.body.to_str)
+      color_data  = result_data["colors"][0]
+
+      # Colr will return id of -1 if no color is found
+      color = Color.new(color_data)
+      if color.id.to_i == -1
+        block.call(nil)
+      else
+        block.call(color)
+      end
     end
   end
 
